@@ -25,6 +25,13 @@ export function tokenLimit(model: Model): TokenCount {
       return 1_048_576;
     case 'gemini-2.0-flash-preview-image-generation':
       return 32_000;
+    // 通义千问/DeepSeek模型的token限制
+    case 'qwen-plus':
+    case 'qwen-max-latest':
+    case 'qvq-max-latest':
+    case 'deepseek-r1':
+    case 'deepseek-v3':
+      return 1_048_576; // 1M tokens，根据实际API文档调整
     default:
       return DEFAULT_TOKEN_LIMIT;
   }

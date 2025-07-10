@@ -28,7 +28,9 @@ export function AuthDialog({
       ? initialErrorMessage
       : process.env.GEMINI_API_KEY
         ? 'Existing API key detected (GEMINI_API_KEY). Select "Gemini API Key" option to use it.'
-        : null,
+        : process.env.QWEN_API_KEY
+          ? 'Existing API key detected (QWEN_API_KEY). Select "通义千问 API Key" option to use it.'
+          : null,
   );
   const items = [
     {
@@ -48,6 +50,7 @@ export function AuthDialog({
       value: AuthType.USE_GEMINI,
     },
     { label: 'Vertex AI', value: AuthType.USE_VERTEX_AI },
+    { label: '通义千问 API Key', value: AuthType.USE_QWEN },
   ];
 
   const initialAuthIndex = items.findIndex((item) => {
@@ -57,6 +60,10 @@ export function AuthDialog({
 
     if (process.env.GEMINI_API_KEY) {
       return item.value === AuthType.USE_GEMINI;
+    }
+
+    if (process.env.QWEN_API_KEY) {
+      return item.value === AuthType.USE_QWEN;
     }
 
     return item.value === AuthType.LOGIN_WITH_GOOGLE;

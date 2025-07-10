@@ -16,6 +16,7 @@ import {
 import { createCodeAssistContentGenerator } from '../code_assist/codeAssist.js';
 import { DEFAULT_GEMINI_MODEL } from '../config/models.js';
 import { getEffectiveModel } from './modelCheck.js';
+import { QwenContentGenerator } from './qwenContentGenerator.js';
 
 /**
  * Interface abstracting the core functionalities for generating content and counting tokens.
@@ -39,6 +40,7 @@ export enum AuthType {
   USE_GEMINI = 'gemini-api-key',
   USE_VERTEX_AI = 'vertex-ai',
   CLOUD_SHELL = 'cloud-shell',
+  USE_QWEN = 'qwen-api-key',
 }
 
 export type ContentGeneratorConfig = {
@@ -46,6 +48,7 @@ export type ContentGeneratorConfig = {
   apiKey?: string;
   vertexai?: boolean;
   authType?: AuthType | undefined;
+  qwenBaseUrl?: string;
 };
 
 export async function createContentGeneratorConfig(
@@ -56,6 +59,7 @@ export async function createContentGeneratorConfig(
   const googleApiKey = process.env.GOOGLE_API_KEY || undefined;
   const googleCloudProject = process.env.GOOGLE_CLOUD_PROJECT || undefined;
   const googleCloudLocation = process.env.GOOGLE_CLOUD_LOCATION || undefined;
+  const qwenApiKey = process.env.QWEN_API_KEY || undefined;
 
   // Use runtime model from config if available, otherwise fallback to parameter or default
   const effectiveModel = model || DEFAULT_GEMINI_MODEL;
@@ -90,6 +94,20 @@ export async function createContentGeneratorConfig(
   ) {
     contentGeneratorConfig.apiKey = googleApiKey;
     contentGeneratorConfig.vertexai = true;
+
+    return contentGeneratorConfig;
+  }
+
+  if (authType === AuthType.USE_QWEN && qwenApiKey) {
+    contentGeneratorConfig.apiKey = qwenApiKey;
+    contentGeneratorConfig.qwenBaseUrl = 'https://dashscope.aliyuncs.com/compatible-mode/v1';
+    // 支持多种模型：qwen系列、deepseek系列
+    if (model && (model.startsWith('qwen') || model.startsWith('qvq') || model.startsWith('deepseek'))) {
+      contentGeneratorConfig.model = model;
+    } else {
+      // 默认使用qwen-plus
+      contentGeneratorConfig.model = 'qwen-plus';
+    }
 
     return contentGeneratorConfig;
   }
@@ -129,6 +147,13 @@ export async function createContentGenerator(
     });
 
     return googleGenAI.models;
+  }
+
+  if (config.authType === AuthType.USE_QWEN) {
+    if (!config.apiKey) {
+      throw new Error('通义千问API密钥未配置');
+    }
+    return new QwenContentGenerator(config.apiKey, config.qwenBaseUrl);
   }
 
   throw new Error(

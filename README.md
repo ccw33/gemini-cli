@@ -65,6 +65,19 @@ The Vertex AI provides [free tier](https://cloud.google.com/vertex-ai/generative
 
 3. (Optionally) Add a billing account on your project to get access to [higher usage limits](https://cloud.google.com/vertex-ai/generative-ai/docs/quotas)
 
+### Use 通义千问 API key:
+
+通义千问 provides powerful Chinese language models with competitive pricing and performance:
+
+1. Generate a key from [阿里云百炼平台](https://bailian.console.aliyun.com/).
+2. Set it as an environment variable in your terminal. Replace `YOUR_API_KEY` with your generated key.
+
+   ```bash
+   export DASHSCOPE_API_KEY="YOUR_API_KEY"
+   ```
+
+3. The CLI will automatically detect the API key and offer 通义千问 as an authentication option.
+
 For other authentication methods, including Google Workspace accounts, see the [authentication](./docs/cli/authentication.md) guide.
 
 ## Examples
