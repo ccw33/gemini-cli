@@ -85,6 +85,11 @@ private supportsReasoning(model: string): boolean {
 6. **`packages/cli/src/config/auth.ts`** - 更新认证验证
 7. **`packages/cli/src/ui/components/AuthDialog.tsx`** - 更新UI显示
 
+### 系统提示相关
+
+8. **`packages/core/src/core/prompts.ts`** - 添加模型身份识别逻辑
+9. **`packages/core/src/core/client.ts`** - 更新系统提示调用，传入模型参数
+
 ## 🎯 使用方法
 
 ### 启动不同模型
@@ -165,6 +170,24 @@ QWEN_API_KEY=sk-your-api-key-here
 - 更新为更直观的 `QWEN_API_KEY`
 - 更新所有相关的配置和文档
 - 保持向后兼容性提示
+
+### 4. 模型身份识别问题
+**问题**：通义千问和DeepSeek模型错误地说自己是Gemini
+
+**原因**：
+- 系统提示中只说"You are an interactive CLI agent"
+- 没有明确告诉模型它的真实身份
+- 模型根据上下文（Gemini CLI项目）推断自己是Gemini
+
+**解决方案**：
+- 修改 `getCoreSystemPrompt` 函数接受模型参数
+- 根据模型名称动态生成正确的身份描述
+- 更新所有调用点传入模型信息
+
+**修复后的身份识别**：
+- qwen-plus: "通义千问 (qwen-plus) - an AI assistant by Alibaba Cloud"
+- deepseek-r1: "DeepSeek (deepseek-r1) - an AI assistant by DeepSeek"
+- gemini-*: "Gemini (model-name) - an AI assistant by Google"
 
 ## 🔄 兼容性
 

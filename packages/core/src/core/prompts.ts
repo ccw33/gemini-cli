@@ -18,7 +18,7 @@ import process from 'node:process';
 import { isGitRepository } from '../utils/gitUtils.js';
 import { MemoryTool, GEMINI_CONFIG_DIR } from '../tools/memoryTool.js';
 
-export function getCoreSystemPrompt(userMemory?: string): string {
+export function getCoreSystemPrompt(userMemory?: string, model?: string): string {
   // if GEMINI_SYSTEM_MD is set (and not 0|false), override system prompt from file
   // default path is .gemini/system.md but can be modified via custom path in GEMINI_SYSTEM_MD
   let systemMdEnabled = false;
@@ -34,10 +34,25 @@ export function getCoreSystemPrompt(userMemory?: string): string {
       throw new Error(`missing system prompt file '${systemMdPath}'`);
     }
   }
+  // 根据模型确定身份描述
+  const getModelIdentity = (model?: string): string => {
+    if (!model) return 'an interactive CLI agent';
+
+    if (model.includes('qwen') || model.includes('qvq')) {
+      return `通义千问 (${model}) - an AI assistant by Alibaba Cloud`;
+    } else if (model.includes('deepseek')) {
+      return `DeepSeek (${model}) - an AI assistant by DeepSeek`;
+    } else if (model.includes('gemini')) {
+      return `Gemini (${model}) - an AI assistant by Google`;
+    } else {
+      return `an AI assistant (${model})`;
+    }
+  };
+
   const basePrompt = systemMdEnabled
     ? fs.readFileSync(systemMdPath, 'utf8')
     : `
-You are an interactive CLI agent specializing in software engineering tasks. Your primary goal is to help users safely and efficiently, adhering strictly to the following instructions and utilizing your available tools.
+You are ${getModelIdentity(model)} specializing in software engineering tasks. Your primary goal is to help users safely and efficiently, adhering strictly to the following instructions and utilizing your available tools.
 
 # Core Mandates
 
