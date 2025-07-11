@@ -9,7 +9,7 @@
 1. **环境要求**: 确保安装了 [Node.js 20](https://nodejs.org/en/download) 或更高版本
 2. **克隆仓库**:
    ```bash
-   git clone https://github.com/ccw33/gemini-cli-chinese.git
+   git clone https://github.com/google-gemini/gemini-cli
    cd gemini-cli
    ```
 3. **安装依赖**:
@@ -34,26 +34,95 @@
    ```
 
 6. **运行CLI**:
+
+   **在当前目录运行**:
    ```bash
    npm start
    ```
-   或指定模型运行:
+
+   **在其他项目目录运行** (推荐用于实际项目开发):
+   ```bash
+   # 方法1: 使用内置脚本
+   npm run start:from -- /path/to/your/project --model qwen-plus
+
+   # 方法2: 使用 npm link (一次性设置)
+   npm run build && npm link
+   cd /path/to/your/project
+   gemini --model qwen-plus
+
+   # 方法3: 直接使用 bundle
+   npm run build
+   cd /path/to/your/project
+   node /path/to/gemini-cli/bundle/gemini.js --model qwen-plus
+   ```
+
+   **支持的模型参数**:
    ```bash
    # 基础通义千问模型
-   npm start -- --model qwen-plus
+   --model qwen-plus
 
    # 通义千问最新版本
-   npm start -- --model qwen-max-latest
+   --model qwen-max-latest
 
    # 视觉推理模型（支持图像/视频）
-   npm start -- --model qvq-max-latest
+   --model qvq-max-latest
 
    # DeepSeek推理模型（支持思考过程）
-   npm start -- --model deepseek-r1
+   --model deepseek-r1
 
    # DeepSeek v3模型
-   npm start -- --model deepseek-v3
+   --model deepseek-v3
+
+   # Gemini模型
+   --model gemini-2.5-pro
+   --model gemini-2.5-flash
    ```
+
+### 跨目录使用源码版本
+
+由于 Gemini CLI 会以启动目录作为项目上下文，在开发时经常需要在其他项目目录中使用源码版本。以下是几种推荐的方法：
+
+#### 方法1: 使用内置脚本 (推荐)
+```bash
+# 在 gemini-cli 源码目录中
+npm run start:from -- /path/to/your/project --model qwen-plus
+
+# 示例
+npm run start:from -- ~/Documents/my-react-app --model qvq-max-latest
+npm run start:from -- /Users/john/work/backend-api --model deepseek-r1
+```
+
+#### 方法2: 使用 npm link (一次性设置)
+```bash
+# 在 gemini-cli 源码目录中执行一次
+npm run build
+npm link
+
+# 之后可以在任何目录使用
+cd /path/to/your/project
+gemini --model qwen-plus
+```
+
+#### 方法3: 创建全局别名
+```bash
+# 在 ~/.bashrc 或 ~/.zshrc 中添加
+alias gemini-dev='node /path/to/gemini-cli/bundle/gemini.js'
+
+# 使用
+cd /path/to/your/project
+gemini-dev --model qwen-plus
+```
+
+#### 方法4: 使用符号链接
+```bash
+# 在 gemini-cli 源码目录中
+npm run build
+sudo ln -s $(pwd)/bundle/gemini.js /usr/local/bin/gemini-dev
+
+# 使用
+cd /path/to/your/project
+gemini-dev --model qwen-plus
+```
 
 ### 支持的AI模型
 
