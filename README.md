@@ -1,4 +1,6 @@
-# Gemini CLI
+# Gemini CLI 中国模型适配版
+
+适配中国模型，如千问、deepseek
 
 [![Gemini CLI CI](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml)
 
