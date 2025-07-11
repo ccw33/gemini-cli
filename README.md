@@ -2,6 +2,145 @@
 
 适配中国模型，如千问、deepseek
 
+## 🚀 快速开始
+
+### 本地安装和运行源码
+
+1. **环境要求**: 确保安装了 [Node.js 20](https://nodejs.org/en/download) 或更高版本
+2. **克隆仓库**:
+   ```bash
+   git clone https://github.com/google-gemini/gemini-cli
+   cd gemini-cli
+   ```
+3. **安装依赖**:
+   ```bash
+   npm ci
+   ```
+4. **构建项目**:
+   ```bash
+   npm run build
+   ```
+5. **配置环境变量** (根据使用的模型):
+   ```bash
+   # 使用Gemini模型
+   export GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
+
+   # 使用通义千问模型
+   export QWEN_API_KEY="YOUR_QWEN_API_KEY"
+
+   # 使用Vertex AI
+   export GOOGLE_API_KEY="YOUR_GOOGLE_API_KEY"
+   export GOOGLE_GENAI_USE_VERTEXAI=true
+   ```
+
+6. **运行CLI**:
+   ```bash
+   npm start
+   ```
+   或指定模型运行:
+   ```bash
+   # 基础通义千问模型
+   npm start -- --model qwen-plus
+
+   # 通义千问最新版本
+   npm start -- --model qwen-max-latest
+
+   # 视觉推理模型（支持图像/视频）
+   npm start -- --model qvq-max-latest
+
+   # DeepSeek推理模型（支持思考过程）
+   npm start -- --model deepseek-r1
+
+   # DeepSeek v3模型
+   npm start -- --model deepseek-v3
+   ```
+
+### 支持的AI模型
+
+本CLI支持以下AI模型：
+
+#### Gemini 模型
+- **gemini-2.5-pro** - Google Gemini 2.5 Pro (默认)
+- **gemini-2.5-flash** - Google Gemini 2.5 Flash (快速版本)
+
+#### 通义千问模型
+- **qwen-plus** - 基础通义千问模型
+- **qwen-max-latest** - 通义千问最新版本
+- **qvq-max-latest** - 通义千问视觉推理模型（支持图像/视频识别）
+
+#### DeepSeek模型
+- **deepseek-r1** - DeepSeek推理模型（支持思考过程显示）
+- **deepseek-v3** - DeepSeek v3模型
+
+### 配置GEMINI.md
+
+`GEMINI.md` 文件是项目的上下文文件，用于为AI提供项目相关的背景信息和指导原则。
+
+1. **创建GEMINI.md文件**: 在项目根目录创建 `GEMINI.md` 文件
+2. **添加项目信息**: 包含项目架构、编码规范、测试指南等
+3. **自定义文件名**: 可在 `.gemini/settings.json` 中配置:
+   ```json
+   {
+     "contextFileName": "CUSTOM.md"
+   }
+   ```
+   或配置多个文件:
+   ```json
+   {
+     "contextFileName": ["GEMINI.md", "DOCS.md", "GUIDE.md"]
+   }
+   ```
+
+### 配置MCP (Model Context Protocol)
+
+MCP服务器允许CLI连接外部工具和数据源。
+
+1. **创建配置文件**: 在项目根目录创建 `.gemini/settings.json`
+2. **配置MCP服务器**:
+   ```json
+   {
+     "mcpServers": {
+       "pythonTools": {
+         "command": "python",
+         "args": ["-m", "my_mcp_server", "--port", "8080"],
+         "cwd": "./mcp-servers/python",
+         "env": {
+           "API_KEY": "$EXTERNAL_API_KEY"
+         },
+         "timeout": 15000
+       },
+       "nodeServer": {
+         "command": "node",
+         "args": ["dist/server.js", "--verbose"],
+         "cwd": "./mcp-servers/node",
+         "trust": true
+       },
+       "dockerServer": {
+         "command": "docker",
+         "args": [
+           "run", "-i", "--rm",
+           "-e", "API_KEY",
+           "-v", "${PWD}:/workspace",
+           "my-mcp-server:latest"
+         ],
+         "env": {
+           "API_KEY": "$EXTERNAL_SERVICE_TOKEN"
+         }
+       }
+     }
+   }
+   ```
+
+3. **MCP配置参数说明**:
+   - `command`: 启动MCP服务器的命令
+   - `args`: 命令参数
+   - `env`: 环境变量（支持 `$VAR_NAME` 和 `${VAR_NAME}` 语法）
+   - `cwd`: 工作目录
+   - `timeout`: 请求超时时间（毫秒）
+   - `trust`: 是否信任服务器（跳过工具调用确认）
+
+---
+
 [![Gemini CLI CI](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml)
 
 ![Gemini CLI Screenshot](./docs/assets/gemini-screenshot.png)
@@ -75,7 +214,7 @@ The Vertex AI provides [free tier](https://cloud.google.com/vertex-ai/generative
 2. Set it as an environment variable in your terminal. Replace `YOUR_API_KEY` with your generated key.
 
    ```bash
-   export DASHSCOPE_API_KEY="YOUR_API_KEY"
+   export QWEN_API_KEY="YOUR_API_KEY"
    ```
 
 3. The CLI will automatically detect the API key and offer 通义千问 as an authentication option.
