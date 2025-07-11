@@ -9,7 +9,7 @@
 1. **环境要求**: 确保安装了 [Node.js 20](https://nodejs.org/en/download) 或更高版本
 2. **克隆仓库**:
    ```bash
-   git clone https://github.com/google-gemini/gemini-cli
+   git clone https://github.com/ccw33/gemini-cli-chinese.git
    cd gemini-cli
    ```
 3. **安装依赖**:
